@@ -39,6 +39,37 @@ VBoxManage natnetwork add --netname m146 --network "10.10.10.0/24" --enable
 
 ## DNS e DHCP
 
+Per configurare il server dns ho utilizzato `dhcpd` mentre per il server dns ho utilizzato `unbound`.
+
+Per installare `dhcpd` si utilizza il seguente comando.
+
+``` { .bash .numberLines }
+apk add acf-dhcp
+```
+
+Per configurarlo bisogna creare il file `dhcpd.conf` nella directory `/etc/dhcp/`.
+
+In seguito il file di configurazione che ho fatto per il server dhcp.
+
+``` { .bash .numberLines }
+# Configurazione standard
+default-lease-time 302400;
+max-lease-time 604800;
+ddns-update-style none;
+log-facility local7;
+authoritative;
+
+subnet 10.10.10.0 netmask 255.255.255.0
+{
+   range "10.10.10.50 10.2.0.200";
+   option domain-name-servers 10.10.10.254;
+   option routers 10.10.10.1;
+   option domain-name "m146.ch";
+}
+```
+
+
+
 ## WebServer
 
 Il webserver è stato installato su un server con una distro di linux di nome `Alpine`.
@@ -98,5 +129,22 @@ Mentre il percorso di default per l'htdocs si trova al seguente percorso.
 +----------------------+---------------------------------------------------------------------------+
 | **Procedura**        | In una `bash`, utilizzare il comando `wget 10.10.10.251`                  |
 +----------------------+---------------------------------------------------------------------------+
-| **Risultati attesi** | Il file index.html viene salvato nella directory attuale            |
+| **Risultati attesi** | Il file index.html viene salvato nella directory attuale                  |
 +----------------------+---------------------------------------------------------------------------+
+
++----------------------+---------------------------------------------------------------------+
+|    **Test Case**     |                               TC-002                                |
++======================+=====================================================================+
+| **Nome**             | DHCP                                                                |
++----------------------+---------------------------------------------------------------------+
+| **Descrizione**      | Testa il corretto funzionamento server dhcp                         |
++----------------------+---------------------------------------------------------------------+
+| **Prerequisiti**     |                                                                     |
++----------------------+---------------------------------------------------------------------+
+| **Procedura**        | Collegare una macchina virtuale alla rete virtuale NAT.  In seguito |
+|                      | utilizzare il comando `ifconfig` e                                  |
++----------------------+---------------------------------------------------------------------+
+| **Risultati attesi** | controllare che la interfaccia abbia unindirizzo IP compreso tra    |
+|                      | `10.10.10.50` e `10.10.10.200`                                      |
++----------------------+---------------------------------------------------------------------+
+
