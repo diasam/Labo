@@ -37,6 +37,8 @@ VBoxManage natnetwork add --netname m146 --network "10.10.10.0/24" --enable
 
 # Macchine virtuali
 
+Tutte le operazioni sono state effettuate su delle macchine virtuali con installato la distro Linux `Alpine`.
+
 ## DNS e DHCP
 
 Per configurare il server dns ho utilizzato `dhcpd`. 
@@ -143,8 +145,6 @@ rc-update add unbound
 
 ## WebServer
 
-Il webserver è stato installato su un server con una distro di linux di nome `Alpine`.
-
 Il webserver installato si chiama `lighttpd`, che è molto sicuro, performante e semplice.
 
 Per installarlo basterà eseguire il seguente comando.
@@ -183,7 +183,57 @@ Mentre il percorso di default per l'htdocs si trova al seguente percorso.
 
 ## FTP
 
+Il servizio FTP è stato creato tramite `vsftpd` (Very Secure ftp Daemon), che è possibile installare su `Alpine` tramite il seguente comando
+
+``` { .bash .numberLines }
+apk add vsftpd
+```
+
+Il servizio sarà immediatamente utilizzabile, con gli accessi anonimi abilitati di base. Se vogliamo possiamo creare una serie di utenti e home directories alle quali gli utenti possono accedere, ma per il momento non è stato configurato
+
+La directory a cui il servizio FTP va a riferirsi come base è configurabile nel file `/etc/passwd:`, alla riga contenente
+
+```
+ftp:x:116:116:vsftpd daemon:<path directory>:/bin/false
+```
+
+Il servizio sarà gestibile tramite i seguenti comandi
+
+``` {.bash .numberLines }
+rc-service vsftpd start
+rc-service vsftpd stop
+rc-service vsftpd restart
+```
+
+Come menzionato sopra, per far partire il servizio all'avvio della macchina, si utilizza il seguente comando
+
+``` { .bash .numberLines }
+rc-update add vsftpd
+```
+
 ## FTPS
+
+Il procedimento per l'installazione di questo servizio è lo stesso di quello FTP. L'unica differenza è l'utilizzo dei certificati SSL/TLS per maggiore sicurezza.
+
+La prima cosa da fare, dopo aver installato il servizio, è creare il certificato che andremo ad utilizzare, tramite il comando, che andrà a creare sia il certificato che la chiave in un unico file
+
+``` { .bash .numberLines }
+openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout /etc/ssl/private/vsftpd.pem -out /etc/ssl/private/vsftpd.pem
+```  
+
+Dopo averlo creato, dovremo andare a notificare vsftpd che deve utilizzare il certificato, cosa che possiamo fare modificando il file `/etc/vsftpd/vsftpd.conf`, al quale aggiungeremo/decommenteremo le seguenti righe
+
+```
+rsa_cert_file=/etc/ssl/private/vsftpd.pem   # Certificato
+rsa_private_key_file=/etc/ssl/private/vsftpd.pem # Chiave
+ssl_enable=YES # Abilitiamo l'uso di SLL
+
+ssl_tlsv1=YES # Abilitiamo l'uso di TLS
+ssl_sslv2=NO # Disabilitiamo le alternative
+ssl_sslv3=NO #
+```
+
+Infine dobbiamo riavviare il servizio tramite il comando citato nella sezione precedente.
 
 # Firewall
 
@@ -219,3 +269,32 @@ Mentre il percorso di default per l'htdocs si trova al seguente percorso.
 |                      | `10.10.10.50` e `10.10.10.200`                                      |
 +----------------------+---------------------------------------------------------------------+
 
++----------------------+---------------------------------------------------------------------+
+|    **Test Case**     |                               TC-003                                |
++======================+=====================================================================+
+| **Nome**             | FTP                                                                 |
++----------------------+---------------------------------------------------------------------+
+| **Descrizione**      | Testa il corretto funzionamento server FTP                          |
++----------------------+---------------------------------------------------------------------+
+| **Prerequisiti**     |                                                                     |
++----------------------+---------------------------------------------------------------------+
+| **Procedura**        | Accedere tramite un client ftp al server                            |
++----------------------+---------------------------------------------------------------------+
+| **Risultati attesi** | Accesso al server FTP ottenuto, e possibilità di scaricare e        |
+|                      | caricare file da esso                                               |
++----------------------+---------------------------------------------------------------------+
+
++----------------------+---------------------------------------------------------------------+
+|    **Test Case**     |                               TC-003                                |
++======================+=====================================================================+
+| **Nome**             | FTPS                                                                |
++----------------------+---------------------------------------------------------------------+
+| **Descrizione**      | Testa il corretto funzionamento server FTPS                         |
++----------------------+---------------------------------------------------------------------+
+| **Prerequisiti**     |                                                                     |
++----------------------+---------------------------------------------------------------------+
+| **Procedura**        | Accedere tramite un client ftp al server                            |
++----------------------+---------------------------------------------------------------------+
+| **Risultati attesi** | Accesso al server FTP ottenuto, con la dovuta richiesta di conferma |
+|                      | del certificato, e possibilità di scaricare e caricare file da esso.|
++----------------------+---------------------------------------------------------------------+
