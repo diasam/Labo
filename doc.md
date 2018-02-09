@@ -8,7 +8,7 @@ subtitle:
 version:
 - 1.0.0
 date:
-- 08.02.2018
+- \today
 monofont:
 - Menlo
 mainfont:
@@ -20,6 +20,8 @@ fontsize:
 ---
 
 # Schema visio
+
+![Network](../visio.png)
 
 # Ambiente di sviluppo
 
@@ -35,11 +37,30 @@ la rete `10.10.10.0/24`.
 VBoxManage natnetwork add --netname m146 --network "10.10.10.0/24" --enable
 ```
 
+# Router
+
+Il router è stato configurato cambiando le seguenti informazioni
+
+![LAN](../LAN.png)
+
+![WAN](../WAN.png)
+
+![DNS](../DNS.png)
+
+![DHCP](../DHCP.png)
+
+\newpage
+
 # Macchine virtuali
 
 Tutte le operazioni sono state effettuate su delle macchine virtuali con installato la distro Linux `Alpine`.
 
 ## DNS e DHCP
+
+Info VM:  
+	- IP 		10.10.10.254  
+	- GATEWAY	10.10.10.1  
+	- DNS		10.10.10.254  
 
 Per configurare il server dns ho utilizzato `dhcpd`. 
 
@@ -145,6 +166,11 @@ rc-update add unbound
 
 ## WebServer
 
+Info VM:  
+	- IP 		10.10.10.251  
+	- GATEWAY	10.10.10.1  
+	- DNS		10.10.10.254  
+
 Il webserver installato si chiama `lighttpd`, che è molto sicuro, performante e semplice.
 
 Per installarlo basterà eseguire il seguente comando.
@@ -183,6 +209,11 @@ Mentre il percorso di default per l'htdocs si trova al seguente percorso.
 
 ## FTP
 
+Info VM:  
+	- IP 		10.10.10.253  
+	- GATEWAY	10.10.10.1  
+	- DNS		10.10.10.254  
+
 Il servizio FTP è stato creato tramite `vsftpd` (Very Secure ftp Daemon), che è possibile installare su `Alpine` tramite il seguente comando
 
 ``` { .bash .numberLines }
@@ -212,6 +243,11 @@ rc-update add vsftpd
 ```
 
 ## FTPS
+
+Info VM:  
+	- IP 		10.10.10.2  
+	- GATEWAY	10.10.10.1  
+	- DNS		10.10.10.254  
 
 Il procedimento per l'installazione di questo servizio è lo stesso di quello FTP. L'unica differenza è l'utilizzo dei certificati SSL/TLS per maggiore sicurezza.
 
@@ -269,6 +305,8 @@ Infine dobbiamo riavviare il servizio tramite il comando citato nella sezione pr
 |                      | `10.10.10.50` e `10.10.10.200`                                      |
 +----------------------+---------------------------------------------------------------------+
 
+\newpage
+
 +----------------------+---------------------------------------------------------------------+
 |    **Test Case**     |                               TC-003                                |
 +======================+=====================================================================+
@@ -298,3 +336,28 @@ Infine dobbiamo riavviare il servizio tramite il comando citato nella sezione pr
 | **Risultati attesi** | Accesso al server FTP ottenuto, con la dovuta richiesta di conferma |
 |                      | del certificato, e possibilità di scaricare e caricare file da esso.|
 +----------------------+---------------------------------------------------------------------+
+
+\newpage
+
+## FTP
+
+Dopo aver installato il server FTP, ci basterà cercre di collegarci con un client FTP (nel mio caso winSCP), e verificare che il collegamento vada a buon fine
+
+![FTP](../ftplogin.png)  
+
+\newpage
+
+## FTPS
+
+Come per il servizio FTP, bisognerà collegarsi al server tramite client, utilizzando però SSL/TLS
+
+![FTPS](../ftpslogin.png)  
+
+Se il collegamento va a buon fine dovrebbe mostrere i certificati SSL/TLS trovati nel server, e chiedere di accettarli. Non essendo riuscito ad effettuare la connessione non posso verificare questo punto.
+
+## WEB
+
+## DNS
+
+## DHCP
+ 
