@@ -37,6 +37,11 @@ la rete `10.10.10.0/24`.
 VBoxManage natnetwork add --netname m146 --network "10.10.10.0/24" --enable
 ```
 
+--------------------
+
+Tutte le macchine virtuali sono state create tramite VirtualBox, in modalità bridge sulla rete 10.10.10.0/24.
+
+
 # Router
 
 Il router è stato configurato cambiando le seguenti informazioni
@@ -53,7 +58,20 @@ Il router è stato configurato cambiando le seguenti informazioni
 
 # Macchine virtuali
 
-Tutte le operazioni sono state effettuate su delle macchine virtuali con installato la distro Linux `Alpine`.
+Tutte le operazioni sono state effettuate su delle macchine virtuali con installato la distro Linux `Alpine`, eccetto per il server contenente l'active directory, il quale è installato con Windows.
+
+## Active Directory
+
+Info VM:  
+  - IP    10.10.10.250  
+  - GATEWAY 10.10.10.1  
+  - DNS   10.10.10.254
+
+Su questo server Windows sono state aggiunte le funzionalità di Active Directory, per gestire gli utenit, e DNS, per poter reindirazzare i client sul server DNS esterno.
+
+Per configurare ciò bisogna andare sotto la sezione `DNS Management`, ed aggiungere una nuova zona secondaria con l'ip del server esterno.
+
+![Placeholder](../placeholder.png)  
 
 ## DNS e DHCP
 
@@ -251,7 +269,7 @@ Info VM:
 
 Il procedimento per l'installazione di questo servizio è lo stesso di quello FTP. L'unica differenza è l'utilizzo dei certificati SSL/TLS per maggiore sicurezza.
 
-La prima cosa da fare, dopo aver installato il servizio, è creare il certificato che andremo ad utilizzare, tramite il comando, che andrà a creare sia il certificato che la chiave in un unico file
+La prima cosa da fare, dopo aver installato il servizio, è creare il certificato che andremo ad utilizzare, tramite il comando, che creerà sia il certificato che la chiave in un unico file
 
 ``` { .bash .numberLines }
 openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout /etc/ssl/private/vsftpd.pem -out /etc/ssl/private/vsftpd.pem
@@ -260,9 +278,14 @@ openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout /etc/ssl/private/vsf
 Dopo averlo creato, dovremo andare a notificare vsftpd che deve utilizzare il certificato, cosa che possiamo fare modificando il file `/etc/vsftpd/vsftpd.conf`, al quale aggiungeremo/decommenteremo le seguenti righe
 
 ```
+ssl_enable=YES    # Turn ON SSL
+anonymous_enable=YES
+allow_anon_ssl=YES 
+force_local_data_ssl=YES  # Use encryption for data
+force_local_logins_ssl=YES  # Use encryption for authentication
+
 rsa_cert_file=/etc/ssl/private/vsftpd.pem   # Certificato
 rsa_private_key_file=/etc/ssl/private/vsftpd.pem # Chiave
-ssl_enable=YES # Abilitiamo l'uso di SLL
 
 ssl_tlsv1=YES # Abilitiamo l'uso di TLS
 ssl_sslv2=NO # Disabilitiamo le alternative
@@ -339,6 +362,10 @@ Infine dobbiamo riavviare il servizio tramite il comando citato nella sezione pr
 
 \newpage
 
+## Active Directory
+
+
+
 ## FTP
 
 Dopo aver installato il server FTP, ci basterà cercre di collegarci con un client FTP (nel mio caso winSCP), e verificare che il collegamento vada a buon fine
@@ -353,7 +380,9 @@ Come per il servizio FTP, bisognerà collegarsi al server tramite client, utiliz
 
 ![FTPS](../ftpslogin.png)  
 
-Se il collegamento va a buon fine dovrebbe mostrere i certificati SSL/TLS trovati nel server, e chiedere di accettarli. Non essendo riuscito ad effettuare la connessione non posso verificare questo punto.
+Se il collegamento va a buon fine dovrebbe mostrere i certificati SSL/TLS trovati nel server, e chiedere di accettarli. 
+
+![FTPS](../ftpscertificates.png)  
 
 ## WEB
 
