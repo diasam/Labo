@@ -386,7 +386,7 @@ Come per il servizio FTP, bisognerà collegarsi al server tramite client, utiliz
 
 Se il collegamento va a buon fine dovrebbe mostrere i certificati SSL/TLS trovati nel server, e chiedere di accettarli. 
 
-![FTPS](images/ftpscertificates.png)  
+![FTPS](images/certificate.png)  
 
 ## WEB
 
