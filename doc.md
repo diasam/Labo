@@ -56,6 +56,20 @@ Il router è stato configurato cambiando le seguenti informazioni
 
 \newpage
 
+# Access Point
+
+L'access point è stato configurato cambiando le seguenti informazioni
+
+Nome utente: `admin`
+Password: `admin`
+
+![Rete Interna wireless](images/wireless1.png)
+
+![Sezione wireless](images/wireless2.png)
+
+![Sezione sicurezza wireless](images/wireless3.png)
+
+
 # Macchine virtuali
 
 Tutte le operazioni sono state effettuate su delle macchine virtuali con installato la distro Linux `Alpine`, eccetto per il server contenente l'active directory, il quale è installato con Windows.
@@ -130,15 +144,17 @@ Per configuarlo si deve modificare il file `/etc/unbound/unbound.conf`.
 ```
 server:
         verbosity: 1
+# Interfaccia su cui ascolta
         interface: 10.10.10.254
         do-ip4: yes
         do-ip6: yes
         do-udp: yes
         do-tcp: yes
         do-daemonize: yes
+# Accetta richieste da chiunque
         access-control: 0.0.0.0/0 allow
         local-data: "web-intranet 10800 IN A 10.10.10.251"
-        local-data: "web_extranet 10800 IN A 10.10.10.12"
+        local-data: "web-extranet 10800 IN A 10.10.10.12"
         local-data: "ftp_intranet 10800 IN A 10.10.10.253"
         local-data: "ftps_intranet 10800 IN A 10.10.10.252"
         local-data: "ftps_extranet 10800 IN A 10.10.10.11"
@@ -151,6 +167,7 @@ remote-control:
         control-enable: no
 forward-zone:
         name: "."
+# Forwarding verso 9.9.9.9 e 8.8.8.8
         forward-addr: 9.9.9.9
         forward-addr: 8.8.8.8
 ```
@@ -308,7 +325,7 @@ Infine dobbiamo riavviare il servizio tramite il comando citato nella sezione pr
 | **Procedura**        | Collegare una macchina virtuale alla rete virtuale NAT.  In seguito |
 |                      | utilizzare il comando `ifconfig` e                                  |
 +----------------------+---------------------------------------------------------------------+
-| **Risultati attesi** | controllare che la interfaccia abbia unindirizzo IP compreso tra    |
+| **Risultati attesi** | controllare che la interfaccia abbia un indirizzo IP compreso tra   |
 |                      | `10.10.10.50` e `10.10.10.200`                                      |
 +----------------------+---------------------------------------------------------------------+
 
@@ -370,7 +387,62 @@ Se il collegamento va a buon fine dovrebbe mostrere i certificati SSL/TLS trovat
 
 ## WEB
 
+Comando
+
+```
+wget web-intranet
+```
+
+Risultato
+
+```
+Connecting to web-intranet (10.10.10.251:80)
+index.html           100% |***|    36   0:00:00 ETA
+```
+
 ## DNS
+
+Comando
+
+```
+dig @10.10.10.254 web-intranet
+```
+
+Risultato 
+
+```
+; <<>> DiG 9.9.7-P3 <<>> @10.10.10.254 web-intranet
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 5865
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+;; QUESTION SECTION:
+;web-intranet.                  IN      A
+
+;; ANSWER SECTION:
+web-intranet.           10800   IN      A       10.10.10.251
+
+;; Query time: 63 msec
+;; SERVER: 10.10.10.254#53(10.10.10.254)
+;; WHEN: Fri Mar 09 16:03:44 CET 2018
+;; MSG SIZE  rcvd: 57
+```
 
 ## DHCP
  
+ Risultato
+
+ ```
+en7: flags=8963<UP,BROADCAST,SMART,RUNNING,PROMISC,SIMPLEX,MULTICAST> mtu 1500
+        options=4<VLAN_MTU>
+        ether 00:24:9b:23:e9:4a 
+        inet6 fe80::146a:b5c6:f53c:d5e%en7 prefixlen 64 secured scopeid 0x10 
+        inet 10.10.10.102 netmask 0xffffff00 broadcast 10.10.10.255
+        nd6 options=201<PERFORMNUD,DAD>
+        media: autoselect (100baseTX <full-duplex>)
+        status: active
+ ```
