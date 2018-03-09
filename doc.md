@@ -21,7 +21,7 @@ fontsize:
 
 # Schema visio
 
-![Network](../visio.png)
+![Network](images/visio.png)
 
 # Ambiente di sviluppo
 
@@ -46,13 +46,13 @@ Tutte le macchine virtuali sono state create tramite VirtualBox, in modalità br
 
 Il router è stato configurato cambiando le seguenti informazioni
 
-![LAN](../LAN.png)
+![LAN](images/LAN.png)
 
-![WAN](../WAN.png)
+![WAN](images/WAN.png)
 
-![DNS](../DNS.png)
+![DNS](images/DNS.png)
 
-![DHCP](../DHCP.png)
+![DHCP](images/DHCP.png)
 
 \newpage
 
@@ -71,7 +71,7 @@ Su questo server Windows sono state aggiunte le funzionalità di Active Director
 
 Per configurare ciò bisogna andare sotto la sezione `DNS Management`, ed aggiungere una nuova zona secondaria con l'ip del server esterno.
 
-![Placeholder](../placeholder.png)  
+![Placeholder](images/placeholder.png)  
 
 ## DNS e DHCP
 
@@ -218,7 +218,11 @@ Il servizio FTP è stato creato tramite `vsftpd` (Very Secure ftp Daemon), che �
 apk add vsftpd
 ```
 
-Il servizio sarà immediatamente utilizzabile, con gli accessi anonimi abilitati di base. Se vogliamo possiamo creare una serie di utenti e home directories alle quali gli utenti possono accedere, ma per il momento non è stato configurato
+Il servizio sarà immediatamente utilizzabile, con gli accessi anonimi abilitati di base. Se non lo fossero, si deve modificare la seguente riga nel file `/etc/vsftpd/vsftpd.conf`.
+
+```
+anonymous_enable=YES
+```
 
 La directory a cui il servizio FTP va a riferirsi come base è configurabile nel file `/etc/passwd:`, alla riga contenente
 
@@ -350,7 +354,7 @@ Infine dobbiamo riavviare il servizio tramite il comando citato nella sezione pr
 
 Dopo aver installato il server FTP, ci basterà cercre di collegarci con un client FTP (nel mio caso winSCP), e verificare che il collegamento vada a buon fine
 
-![FTP](../ftplogin.png)  
+![FTP](images/ftplogin.png)  
 
 \newpage
 
@@ -358,11 +362,11 @@ Dopo aver installato il server FTP, ci basterà cercre di collegarci con un clie
 
 Come per il servizio FTP, bisognerà collegarsi al server tramite client, utilizzando però SSL/TLS
 
-![FTPS](../ftpslogin.png)  
+![FTPS](images/ftpslogin.png)  
 
 Se il collegamento va a buon fine dovrebbe mostrere i certificati SSL/TLS trovati nel server, e chiedere di accettarli. 
 
-![FTPS](../ftpscertificates.png)  
+![FTPS](images/certificate.png)  
 
 ## WEB
 
