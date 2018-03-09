@@ -238,7 +238,11 @@ Il servizio FTP è stato creato tramite `vsftpd` (Very Secure ftp Daemon), che �
 apk add vsftpd
 ```
 
-Il servizio sarà immediatamente utilizzabile, con gli accessi anonimi abilitati di base. Se vogliamo possiamo creare una serie di utenti e home directories alle quali gli utenti possono accedere, ma per il momento non è stato configurato
+Il servizio sarà immediatamente utilizzabile, con gli accessi anonimi abilitati di base. Se non lo fossero, si deve modificare la seguente riga nel file `/etc/vsftpd/vsftpd.conf`.
+
+```
+anonymous_enable=YES
+```
 
 La directory a cui il servizio FTP va a riferirsi come base è configurabile nel file `/etc/passwd:`, alla riga contenente
 
