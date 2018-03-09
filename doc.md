@@ -361,6 +361,21 @@ Infine dobbiamo riavviare il servizio tramite il comando citato nella sezione pr
 |                      | del certificato, e possibilità di scaricare e caricare file da esso.|
 +----------------------+---------------------------------------------------------------------+
 
++----------------------+-------------------------------------------------------------------------------+
+|    **Test Case**     |                                    TC-004                                     |
++======================+===============================================================================+
+| **Nome**             | Active Directory                                                              |
++----------------------+-------------------------------------------------------------------------------+
+| **Descrizione**      | Testa l'utente in active directory                                            |
++----------------------+-------------------------------------------------------------------------------+
+| **Prerequisiti**     |                                                                               |
++----------------------+-------------------------------------------------------------------------------+
+| **Procedura**        | Accedere tramite l'utente di dominio `giorgio.lucchini` password `Password&1` |
++----------------------+-------------------------------------------------------------------------------+
+| **Risultati attesi** | Il client riesce ad accedere al dominio.                                      |
++----------------------+-------------------------------------------------------------------------------+
+
+
 \newpage
 
 ## Active Directory
@@ -446,3 +461,7 @@ en7: flags=8963<UP,BROADCAST,SMART,RUNNING,PROMISC,SIMPLEX,MULTICAST> mtu 1500
         media: autoselect (100baseTX <full-duplex>)
         status: active
  ```
+
+## Active Directory
+
+![Active directory](images/activeDirectory.png)  
