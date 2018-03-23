@@ -132,9 +132,9 @@ authoritative;
 
 subnet 10.10.10.0 netmask 255.255.255.0
 {
-   range "10.10.10.50 10.2.0.200";
+   range "10.10.10.50 10.10.10.200";
+   option routers 10.10.10.1;
    option domain-name-servers 10.10.10.254;
-   option routers 10.10.10.249;
    option domain-name "m146.ch";
 }
 ```
@@ -190,6 +190,9 @@ forward-zone:
         forward-addr: 9.9.9.9
         forward-addr: 8.8.8.8
 ```
+
+Gli address records di tipo `A` hanno un `.` al posto del `_` perché il web server `lighttpd` ha dei problemi a gestire i un hostname
+con un `_` all'interno.
 
 Dopodichè farlo partire e fare in modo che si avvii a boot-time tramite i seguenti comandi.
 
@@ -335,9 +338,9 @@ Infine dobbiamo riavviare il servizio tramite il comando citato nella sezione pr
 +----------------------+---------------------------------------------------------------------------+
 | **Prerequisiti**     |                                                                           |
 +----------------------+---------------------------------------------------------------------------+
-| **Procedura**        | In una `bash`, utilizzare il comando `wget 10.10.10.251`                  |
+| **Procedura**        | Aprire un web browser e andare sulla pagina `web.intranet`                |
 +----------------------+---------------------------------------------------------------------------+
-| **Risultati attesi** | Il file index.html viene salvato nella directory attuale                  |
+| **Risultati attesi** | Una pagina con `Web server running`                                       |
 +----------------------+---------------------------------------------------------------------------+
 
 +----------------------+---------------------------------------------------------------------+
@@ -425,7 +428,8 @@ Infine dobbiamo riavviare il servizio tramite il comando citato nella sezione pr
 
 ## FTP
 
-Dopo aver installato il server FTP, ci basterà cercre di collegarci con un client FTP (nel mio caso winSCP), e verificare che il collegamento vada a buon fine
+Dopo aver installato il server FTP, ci basterà cercare di collegarci con un client FTP (nel mio caso winSCP), e verificare che il collegamento 
+vada a buon fine
 
 ![FTP](images/ftplogin.png)  
 
@@ -445,13 +449,15 @@ Se il collegamento va a buon fine dovrebbe mostrere i certificati SSL/TLS trovat
 
 ## WEB
 
-Il browser visualizza correttamente la pagina web.
+Per verificare il corretto funzionamento del web server, bisogna scrivere l'indirizzo `web.intranet` all'interno
+dell'url di un web browser, e caricare la pagina.
 
 | [Webserver](images/web_dns.png)
 
 ## DNS
 
-L'indirizzo del web-server viene tradotto correttamente.
+Per verificare il corretto funzionamento del dns server, bisogna scrivere l'indirizzo `web.intranet` all'interno
+dell'url di un web browser, e caricare la pagina.
 
 | [Dns](images/web_dns.png)
 
