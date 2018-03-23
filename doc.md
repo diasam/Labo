@@ -144,32 +144,34 @@ Per configuarlo si deve modificare il file `/etc/unbound/unbound.conf`.
 ```
 server:
         verbosity: 1
-# Interfaccia su cui ascolta
+        # Interfaccia su cui ascolta
         interface: 10.10.10.254
         do-ip4: yes
         do-ip6: yes
         do-udp: yes
         do-tcp: yes
         do-daemonize: yes
-# Accetta richieste da chiunque
         access-control: 0.0.0.0/0 allow
-        local-data: "web-intranet 10800 IN A 10.10.10.251"
-        local-data: "web-extranet 10800 IN A 10.10.10.12"
-        local-data: "ftp_intranet 10800 IN A 10.10.10.253"
-        local-data: "ftps_intranet 10800 IN A 10.10.10.252"
-        local-data: "ftps_extranet 10800 IN A 10.10.10.11"
-        local-data: "m146.ch 10800 IN A 10.10.10.249" 
+	# Zona
+        local-zone: "m146.ch" static
+	# Address records
+        local-data: "web.intranet 10800 IN A 10.10.10.251"
+	local-data: "web.intranet 10800 IN A 10.10.10.251"
+	local-data: "web.extranet 10800 IN A 192.168.2.13"
+	local-data: "ftp.intranet 10800 IN A 10.10.10.253"
+	local-data: "ftps.intranet 10800 IN A 10.10.10.252"
+	local-data: "ftps.extranet 10800 IN A 192.168.2.12" 
         hide-identity: yes 
         hide-version: yes
 use-syslog: yes
 python:
 remote-control:
         control-enable: no
-forward-zone:
+forward-zone:      
         name: "."
-# Forwarding verso 9.9.9.9 e 8.8.8.8
         forward-addr: 9.9.9.9
         forward-addr: 8.8.8.8
+
 ```
 
 Dopodichè farlo partire e fare in modo che si avvii a boot-time tramite i seguenti comandi.
@@ -177,6 +179,8 @@ Dopodichè farlo partire e fare in modo che si avvii a boot-time tramite i segue
 ``` { .bash .numberLines }
 /etc/init.d/unbound start
 rc-update add unbound
+
+
 ```
 
 ## WebServer
@@ -376,10 +380,24 @@ Infine dobbiamo riavviare il servizio tramite il comando citato nella sezione pr
 +----------------------+-------------------------------------------------------------------------------+
 
 
++----------------------+------------------------------------------------+
+|    **Test Case**     |                     TC-006                     |
++======================+================================================+
+| **Nome**             | DNS                                            |
++----------------------+------------------------------------------------+
+| **Descrizione**      | Testa il corretto funzionamento del server DNS |
++----------------------+------------------------------------------------+
+| **Prerequisiti**     |                                                |
++----------------------+------------------------------------------------+
+| **Procedura**        | Vedi TC-001                                    |
++----------------------+------------------------------------------------+
+| **Risultati attesi** | Vedi TC-001                                    |
++----------------------+------------------------------------------------+
+
+
 \newpage
 
 ## Active Directory
-
 
 
 ## FTP
@@ -402,18 +420,7 @@ Se il collegamento va a buon fine dovrebbe mostrere i certificati SSL/TLS trovat
 
 ## WEB
 
-Comando
-
-```
-wget web-intranet
-```
-
-Risultato
-
-```
-Connecting to web-intranet (10.10.10.251:80)
-index.html           100% |***|    36   0:00:00 ETA
-```
+| [Webserver](images/web_dns.png)
 
 ## DNS
 
