@@ -25,10 +25,10 @@ fontsize:
 
 # Ambiente di sviluppo
 
-Per poter lavorare da casa abbiamo dovuto simulare la rete interna
+Per poter lavorare da casa ho dovuto simulare la rete interna
 del firewall.
 
-Per fare ciò abbiamo creato una rete `NAT` in `virtualbox`.
+Per fare ciò ho creato una rete `NAT` in `virtualbox`.
 
 Con il seguente comando  da terminale si può creare una rete NAT con 
 la rete `10.10.10.0/24`.
@@ -36,6 +36,7 @@ la rete `10.10.10.0/24`.
 ``` {.bash .numberLines }
 VBoxManage natnetwork add --netname m146 --network "10.10.10.0/24" --enable
 ```
+
 
 # Firewall
 
@@ -53,7 +54,7 @@ Il firewall è stato configurato cambiando le seguenti informazioni
 
 # Access Point
 
-L'access point è stato configurato cambiando le seguenti informazioni dopo aver eseguito l'accesso su `10.10.10.250`
+L'access point è stato configurato cambiando le seguenti informazioni
 
 Nome utente: `admin`
 Password: `admin`
@@ -109,7 +110,7 @@ Info VM:
 	- GATEWAY	10.10.10.1  
 	- DNS		10.10.10.254  
 
-Per configurare il server dns abbiamo utilizzato `dhcpd`. 
+Per configurare il server dns ho utilizzato `dhcpd`. 
 
 Per installare `dhcpd` si utilizza il seguente comando.
 
@@ -119,7 +120,7 @@ apk add acf-dhcp
 
 Per configurarlo bisogna creare il file `dhcpd.conf` nella directory `/etc/dhcp/`.
 
-In seguito il file di configurazione che abbiamo fatto per il server dhcp.
+In seguito il file di configurazione che ho fatto per il server dhcp.
 
 ``` { .bash .numberLines }
 # Configurazione standard
@@ -131,9 +132,9 @@ authoritative;
 
 subnet 10.10.10.0 netmask 255.255.255.0
 {
-   range "10.10.10.50 10.10.10.200";
-   option routers 10.10.10.1;
+   range "10.10.10.50 10.2.0.200";
    option domain-name-servers 10.10.10.254;
+   option routers 10.10.10.249;
    option domain-name "m146.ch";
 }
 ```
@@ -146,7 +147,7 @@ rc-service dhcpd start
 rc-update add dhcpd
 ```
 
-Per il server dns abbiamo utilizzato `unbound`.
+Per il server dns ho utilizzato `unbound`.
 
 Per installarlo si utilizza il comando 
 
@@ -159,45 +160,43 @@ Per configuarlo si deve modificare il file `/etc/unbound/unbound.conf`.
 ```
 server:
         verbosity: 1
-# Interfaccia su cui ascolta
+        # Interfaccia su cui ascolta
         interface: 10.10.10.254
         do-ip4: yes
         do-ip6: yes
         do-udp: yes
         do-tcp: yes
         do-daemonize: yes
-        # Accetta richieste da chiunque
         access-control: 0.0.0.0/0 allow
-        
+	# Zona
+        local-zone: "m146.ch" static
 	# Address records
         local-data: "web.intranet 10800 IN A 10.10.10.251"
 	local-data: "web.intranet 10800 IN A 10.10.10.251"
 	local-data: "web.extranet 10800 IN A 192.168.2.13"
 	local-data: "ftp.intranet 10800 IN A 10.10.10.253"
 	local-data: "ftps.intranet 10800 IN A 10.10.10.252"
-	local-data: "ftps.extranet 10800 IN A 192.168.2.12"
-
+	local-data: "ftps.extranet 10800 IN A 192.168.2.12" 
         hide-identity: yes 
         hide-version: yes
 use-syslog: yes
 python:
 remote-control:
         control-enable: no
-forward-zone:
+forward-zone:      
         name: "."
-# Forwarding verso 9.9.9.9 e 8.8.8.8
         forward-addr: 9.9.9.9
         forward-addr: 8.8.8.8
-```
 
-Gli address records di tipo `A` hanno un `.` al posto del `_` perché il web server `lighttpd` ha dei problemi a gestire i un hostname
-con un `_` all'interno.
+```
 
 Dopodichè farlo partire e fare in modo che si avvii a boot-time tramite i seguenti comandi.
 
 ``` { .bash .numberLines }
 /etc/init.d/unbound start
 rc-update add unbound
+
+
 ```
 
 ## WebServer
@@ -337,9 +336,9 @@ Infine dobbiamo riavviare il servizio tramite il comando citato nella sezione pr
 +----------------------+---------------------------------------------------------------------------+
 | **Prerequisiti**     |                                                                           |
 +----------------------+---------------------------------------------------------------------------+
-| **Procedura**        | Aprire un web browser e andare sulla pagina `web.intranet`                |
+| **Procedura**        | In una `bash`, utilizzare il comando `wget 10.10.10.251`                  |
 +----------------------+---------------------------------------------------------------------------+
-| **Risultati attesi** | Una pagina con `Web server running`                                       |
+| **Risultati attesi** | Il file index.html viene salvato nella directory attuale                  |
 +----------------------+---------------------------------------------------------------------------+
 
 +----------------------+---------------------------------------------------------------------+
@@ -406,7 +405,7 @@ Infine dobbiamo riavviare il servizio tramite il comando citato nella sezione pr
 
 
 +----------------------+------------------------------------------------+
-|    **Test Case**     |                     TC-005                     |
+|    **Test Case**     |                     TC-006                     |
 +======================+================================================+
 | **Nome**             | DNS                                            |
 +----------------------+------------------------------------------------+
@@ -419,16 +418,19 @@ Infine dobbiamo riavviare il servizio tramite il comando citato nella sezione pr
 | **Risultati attesi** | Vedi TC-001                                    |
 +----------------------+------------------------------------------------+
 
+
 \newpage
 
 ## Active Directory
 
+<<<<<<< HEAD
+=======
 ![Active directory](images/activeDirectory.png)  
+>>>>>>> 9b9d759867f1fc3163c38ded1467e053268c09b5
 
 ## FTP
 
-Dopo aver installato il server FTP, ci basterà cercare di collegarci con un client FTP (nel mio caso winSCP), e verificare che il collegamento 
-vada a buon fine
+Dopo aver installato il server FTP, ci basterà cercre di collegarci con un client FTP (nel mio caso winSCP), e verificare che il collegamento vada a buon fine
 
 ![FTP](images/ftplogin.png)  
 
@@ -438,31 +440,65 @@ vada a buon fine
 
 Come per il servizio FTP, bisognerà collegarsi al server tramite client, utilizzando però SSL/TLS
 
-![FTPS connection](images/ftpslogin.png)  
+![FTPS](images/ftpslogin.png)  
 
 Se il collegamento va a buon fine dovrebbe mostrere i certificati SSL/TLS trovati nel server, e chiedere di accettarli. 
 
-![Certificate](images/certificate.png)  
-
-Dopo la connessione si potrà vedere un lucchetto con specificato l'utilizzo di SSL
-
-![FTPS SSL](images/ftpslock.png)
+![FTPS](images/certificate.png)  
 
 \newpage
 
 ## WEB
 
-Per verificare il corretto funzionamento del web server, bisogna scrivere l'indirizzo `web.intranet` all'interno
-dell'url di un web browser, e caricare la pagina.
-
+<<<<<<< HEAD
 | [Webserver](images/web_dns.png)
+=======
+<<<<<<< Updated upstream
+Comando
+
+```
+wget web-intranet
+```
+
+Risultato
+
+```
+Connecting to web-intranet (10.10.10.251:80)
+index.html           100% |***|    36   0:00:00 ETA
+```
+>>>>>>> 9b9d759867f1fc3163c38ded1467e053268c09b5
 
 ## DNS
 
-Per verificare il corretto funzionamento del dns server, bisogna scrivere l'indirizzo `web.intranet` all'interno
-dell'url di un web browser, e caricare la pagina.
+Comando
 
-| [Dns](images/web_dns.png)
+```
+dig @10.10.10.254 web-intranet
+```
+
+Risultato 
+
+```
+; <<>> DiG 9.9.7-P3 <<>> @10.10.10.254 web-intranet
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 5865
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+;; QUESTION SECTION:
+;web-intranet.                  IN      A
+
+;; ANSWER SECTION:
+web-intranet.           10800   IN      A       10.10.10.251
+
+;; Query time: 63 msec
+;; SERVER: 10.10.10.254#53(10.10.10.254)
+;; WHEN: Fri Mar 09 16:03:44 CET 2018
+;; MSG SIZE  rcvd: 57
+```
 
 ## DHCP
  
