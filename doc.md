@@ -37,14 +37,10 @@ la rete `10.10.10.0/24`.
 VBoxManage natnetwork add --netname m146 --network "10.10.10.0/24" --enable
 ```
 
---------------------
 
-Tutte le macchine virtuali sono state create tramite VirtualBox, in modalità bridge sulla rete 10.10.10.0/24.
+# Firewall
 
-
-# Router
-
-Il router è stato configurato cambiando le seguenti informazioni
+Il firewall è stato configurato cambiando le seguenti informazioni
 
 ![LAN](images/LAN.png)
 
@@ -69,6 +65,15 @@ Password: `admin`
 
 ![Sezione sicurezza wireless](images/wireless3.png)
 
+\newpage
+
+# DMZ
+
+Per configurare un DMZ ci è bastato andare a modificare una delle interfacce già presenti sul firewall, nel seguente modo
+
+![Interfaccia base](images/DMZ1.png)
+
+![Interfaccia modificata](images/DMZ2.png)
 
 # Macchine virtuali
 
@@ -77,20 +82,31 @@ Tutte le operazioni sono state effettuate su delle macchine virtuali con install
 ## Active Directory
 
 Info VM:  
-  - IP    10.10.10.250  
+  - IP    10.10.10.249  
   - GATEWAY 10.10.10.1  
   - DNS   10.10.10.254
 
 Su questo server Windows sono state aggiunte le funzionalità di Active Directory, per gestire gli utenit, e DNS, per poter reindirazzare i client sul server DNS esterno.
 
-Per configurare ciò bisogna andare sotto la sezione `DNS Management`, ed aggiungere una nuova zona secondaria con l'ip del server esterno.
+Per fare ciò bisogna fare un paio di passaggi.
+Innanzitutto bisogna cambiare l'opzione `dynamic updates` su `Nonsecure and secure` nelle proprietà della zona `m146.ch`, per permettere la comunicazione con Linux.
 
-![Placeholder](images/placeholder.png)  
+![DNS](images/DNS2.png)  
+
+In seguito dovremo avere il server linux accettato come indirizzo di forwarding, che si può configurare nelle proprietà del dominio
+
+![DNS](images/DNS3.png)  
+
+Infine dobbiamo aggiungere un nameserver aggiuntivo nella zona `m146.ch` contenuta nelle `Forward Lookup Zones`.
+
+![DNS](images/DNS4.png) 
+
+\newpage
 
 ## DNS e DHCP
 
 Info VM:  
-	- IP 		10.10.10.254  
+	- IP 		10.10.10.254
 	- GATEWAY	10.10.10.1  
 	- DNS		10.10.10.254  
 
@@ -182,7 +198,8 @@ rc-update add unbound
 ## WebServer
 
 Info VM:  
-	- IP 		10.10.10.251  
+	- IP 		10.10.10.251 
+	- Alias		web.intranet 
 	- GATEWAY	10.10.10.1  
 	- DNS		10.10.10.254  
 
@@ -226,6 +243,7 @@ Mentre il percorso di default per l'htdocs si trova al seguente percorso.
 
 Info VM:  
 	- IP 		10.10.10.253  
+	- Alias		ftp.intranet
 	- GATEWAY	10.10.10.1  
 	- DNS		10.10.10.254  
 
@@ -264,7 +282,8 @@ rc-update add vsftpd
 ## FTPS
 
 Info VM:  
-	- IP 		10.10.10.2  
+	- IP 		10.10.10.252
+	- Alias		ftps.intranet	
 	- GATEWAY	10.10.10.1  
 	- DNS		10.10.10.254  
 
@@ -279,18 +298,23 @@ openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout /etc/ssl/private/vsf
 Dopo averlo creato, dovremo andare a notificare vsftpd che deve utilizzare il certificato, cosa che possiamo fare modificando il file `/etc/vsftpd/vsftpd.conf`, al quale aggiungeremo/decommenteremo le seguenti righe
 
 ```
-ssl_enable=YES    # Turn ON SSL
+ssl_enable=YES    	# Abilito SSL
+
+implicit_ssl=YES	# Abilito la connessione implicita SSL sulla porta 990
+listen_port=990	  	
+
 anonymous_enable=YES
+
 allow_anon_ssl=YES 
-force_local_data_ssl=YES  # Use encryption for data
-force_local_logins_ssl=YES  # Use encryption for authentication
+force_local_data_ssl=YES  	# Encripto i dati e i login
+force_local_logins_ssl=YES  #
 
-rsa_cert_file=/etc/ssl/private/vsftpd.pem   # Certificato
-rsa_private_key_file=/etc/ssl/private/vsftpd.pem # Chiave
+rsa_cert_file=/etc/ssl/private/vsftpd.pem   		# Certificato
+rsa_private_key_file=/etc/ssl/private/vsftpd.pem 	# Chiave
 
-ssl_tlsv1=YES # Abilitiamo l'uso di TLS
-ssl_sslv2=NO # Disabilitiamo le alternative
-ssl_sslv3=NO #
+ssl_tlsv1=YES 	# Abilitiamo l'uso di TLS
+ssl_sslv2=NO 	# Disabilitiamo le alternative
+ssl_sslv3=NO 	#
 ```
 
 Infine dobbiamo riavviare il servizio tramite il comando citato nella sezione precedente.
@@ -380,7 +404,7 @@ Infine dobbiamo riavviare il servizio tramite il comando citato nella sezione pr
 
 ## Active Directory
 
-
+![Active directory](images/activeDirectory.png)  
 
 ## FTP
 
@@ -400,8 +424,11 @@ Se il collegamento va a buon fine dovrebbe mostrere i certificati SSL/TLS trovat
 
 ![FTPS](images/certificate.png)  
 
+\newpage
+
 ## WEB
 
+<<<<<<< Updated upstream
 Comando
 
 ```
@@ -462,6 +489,3 @@ en7: flags=8963<UP,BROADCAST,SMART,RUNNING,PROMISC,SIMPLEX,MULTICAST> mtu 1500
         status: active
  ```
 
-## Active Directory
-
-![Active directory](images/activeDirectory.png)  
