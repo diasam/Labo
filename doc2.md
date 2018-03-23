@@ -160,35 +160,34 @@ Per configuarlo si deve modificare il file `/etc/unbound/unbound.conf`.
 ```
 server:
         verbosity: 1
-# Interfaccia su cui ascolta
+        # Interfaccia su cui ascolta
         interface: 10.10.10.254
         do-ip4: yes
         do-ip6: yes
         do-udp: yes
         do-tcp: yes
         do-daemonize: yes
-        # Accetta richieste da chiunque
         access-control: 0.0.0.0/0 allow
-        
+	# Zona
+        local-zone: "m146.ch" static
 	# Address records
         local-data: "web.intranet 10800 IN A 10.10.10.251"
 	local-data: "web.intranet 10800 IN A 10.10.10.251"
 	local-data: "web.extranet 10800 IN A 192.168.2.13"
 	local-data: "ftp.intranet 10800 IN A 10.10.10.253"
 	local-data: "ftps.intranet 10800 IN A 10.10.10.252"
-	local-data: "ftps.extranet 10800 IN A 192.168.2.12"
-
+	local-data: "ftps.extranet 10800 IN A 192.168.2.12" 
         hide-identity: yes 
         hide-version: yes
 use-syslog: yes
 python:
 remote-control:
         control-enable: no
-forward-zone:
+forward-zone:      
         name: "."
-# Forwarding verso 9.9.9.9 e 8.8.8.8
         forward-addr: 9.9.9.9
         forward-addr: 8.8.8.8
+
 ```
 
 Dopodichè farlo partire e fare in modo che si avvii a boot-time tramite i seguenti comandi.
@@ -196,6 +195,8 @@ Dopodichè farlo partire e fare in modo che si avvii a boot-time tramite i segue
 ``` { .bash .numberLines }
 /etc/init.d/unbound start
 rc-update add unbound
+
+
 ```
 
 ## WebServer
@@ -404,7 +405,7 @@ Infine dobbiamo riavviare il servizio tramite il comando citato nella sezione pr
 
 
 +----------------------+------------------------------------------------+
-|    **Test Case**     |                     TC-005                     |
+|    **Test Case**     |                     TC-006                     |
 +======================+================================================+
 | **Nome**             | DNS                                            |
 +----------------------+------------------------------------------------+
@@ -417,11 +418,15 @@ Infine dobbiamo riavviare il servizio tramite il comando citato nella sezione pr
 | **Risultati attesi** | Vedi TC-001                                    |
 +----------------------+------------------------------------------------+
 
+
 \newpage
 
 ## Active Directory
 
+<<<<<<< HEAD
+=======
 ![Active directory](images/activeDirectory.png)  
+>>>>>>> 9b9d759867f1fc3163c38ded1467e053268c09b5
 
 ## FTP
 
@@ -445,15 +450,55 @@ Se il collegamento va a buon fine dovrebbe mostrere i certificati SSL/TLS trovat
 
 ## WEB
 
-Il browser visualizza correttamente la pagina web.
-
+<<<<<<< HEAD
 | [Webserver](images/web_dns.png)
+=======
+<<<<<<< Updated upstream
+Comando
+
+```
+wget web-intranet
+```
+
+Risultato
+
+```
+Connecting to web-intranet (10.10.10.251:80)
+index.html           100% |***|    36   0:00:00 ETA
+```
+>>>>>>> 9b9d759867f1fc3163c38ded1467e053268c09b5
 
 ## DNS
 
-L'indirizzo del web-server viene tradotto correttamente.
+Comando
 
-| [Dns](images/web_dns.png)
+```
+dig @10.10.10.254 web-intranet
+```
+
+Risultato 
+
+```
+; <<>> DiG 9.9.7-P3 <<>> @10.10.10.254 web-intranet
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 5865
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+;; QUESTION SECTION:
+;web-intranet.                  IN      A
+
+;; ANSWER SECTION:
+web-intranet.           10800   IN      A       10.10.10.251
+
+;; Query time: 63 msec
+;; SERVER: 10.10.10.254#53(10.10.10.254)
+;; WHEN: Fri Mar 09 16:03:44 CET 2018
+;; MSG SIZE  rcvd: 57
+```
 
 ## DHCP
  
