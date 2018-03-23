@@ -25,10 +25,10 @@ fontsize:
 
 # Ambiente di sviluppo
 
-Per poter lavorare da casa ho dovuto simulare la rete interna
+Per poter lavorare da casa abbiamo dovuto simulare la rete interna
 del firewall.
 
-Per fare ciò ho creato una rete `NAT` in `virtualbox`.
+Per fare ciò abbiamo creato una rete `NAT` in `virtualbox`.
 
 Con il seguente comando  da terminale si può creare una rete NAT con 
 la rete `10.10.10.0/24`.
@@ -36,7 +36,6 @@ la rete `10.10.10.0/24`.
 ``` {.bash .numberLines }
 VBoxManage natnetwork add --netname m146 --network "10.10.10.0/24" --enable
 ```
-
 
 # Firewall
 
@@ -54,7 +53,7 @@ Il firewall è stato configurato cambiando le seguenti informazioni
 
 # Access Point
 
-L'access point è stato configurato cambiando le seguenti informazioni
+L'access point è stato configurato cambiando le seguenti informazioni dopo aver eseguito l'accesso su `10.10.10.250`
 
 Nome utente: `admin`
 Password: `admin`
@@ -110,7 +109,7 @@ Info VM:
 	- GATEWAY	10.10.10.1  
 	- DNS		10.10.10.254  
 
-Per configurare il server dns ho utilizzato `dhcpd`. 
+Per configurare il server dns abbiamo utilizzato `dhcpd`. 
 
 Per installare `dhcpd` si utilizza il seguente comando.
 
@@ -120,7 +119,7 @@ apk add acf-dhcp
 
 Per configurarlo bisogna creare il file `dhcpd.conf` nella directory `/etc/dhcp/`.
 
-In seguito il file di configurazione che ho fatto per il server dhcp.
+In seguito il file di configurazione che abbiamo fatto per il server dhcp.
 
 ``` { .bash .numberLines }
 # Configurazione standard
@@ -147,7 +146,7 @@ rc-service dhcpd start
 rc-update add dhcpd
 ```
 
-Per il server dns ho utilizzato `unbound`.
+Per il server dns abbiamo utilizzato `unbound`.
 
 Per installarlo si utilizza il comando 
 
@@ -418,11 +417,15 @@ Dopo aver installato il server FTP, ci basterà cercre di collegarci con un clie
 
 Come per il servizio FTP, bisognerà collegarsi al server tramite client, utilizzando però SSL/TLS
 
-![FTPS](images/ftpslogin.png)  
+![FTPS connection](images/ftpslogin.png)  
 
 Se il collegamento va a buon fine dovrebbe mostrere i certificati SSL/TLS trovati nel server, e chiedere di accettarli. 
 
-![FTPS](images/certificate.png)  
+![Certificate](images/certificate.png)  
+
+Dopo la connessione si potrà vedere un lucchetto con specificato l'utilizzo di SSL
+
+![FTPS SSL](images/ftpslock.png)
 
 \newpage
 
