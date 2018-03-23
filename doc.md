@@ -58,9 +58,16 @@ L'access point è stato configurato cambiando le seguenti informazioni dopo aver
 Nome utente: `admin`
 Password: `admin`
 
+
+Qui si configura l'indirizzo IP che avrà l'access point sulla rete.
+
 ![Rete Interna wireless](images/wireless1.png)
 
+Il nome SSID sarà `Gruppo 1`, il channel `13`.
+
 ![Sezione wireless](images/wireless2.png)
+
+La sicurezza della rete sarà `WPA2 Personal`, l'algoritmo WPA sarà `TKIP+AES`, la password della rete wireless `Password&1`. 
 
 ![Sezione sicurezza wireless](images/wireless3.png)
 
@@ -479,3 +486,10 @@ en7: flags=8963<UP,BROADCAST,SMART,RUNNING,PROMISC,SIMPLEX,MULTICAST> mtu 1500
         status: active
  ```
 
+## Web server dmz
+
+Abbiamo testato il webserver sulla DMZ con il server configurato dal docente e funzionava.
+
+## FTPS dmz
+
+Abbiamo testato il server FTPS sulla DMZ con il server configurato dal docente e funzionava.
